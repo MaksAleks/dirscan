@@ -1,4 +1,6 @@
-package max.dirscan.output;
+package max.dirscan.output.format;
+
+import max.dirscan.output.OutputEntry;
 
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;

@@ -1,6 +1,7 @@
-package max.dirscan.output;
+package max.dirscan.output.writer;
 
-import max.dirscan.config.OutputEntryProcessorConfig;
+import max.dirscan.config.OutputEntryWritingConfig;
+import max.dirscan.output.OutputEntry;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,7 +13,7 @@ public class DefaultOutputEntryWriter extends OutputEntryWriter {
 
     private PrintWriter writer;
 
-    public DefaultOutputEntryWriter(Path file, OutputEntryProcessorConfig config) {
+    public DefaultOutputEntryWriter(Path file, OutputEntryWritingConfig config) {
         super(file, config);
         try {
             FileOutputStream fstream = new FileOutputStream(file.toAbsolutePath().toString());

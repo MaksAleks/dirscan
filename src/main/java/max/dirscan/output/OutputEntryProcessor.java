@@ -1,13 +1,19 @@
 package max.dirscan.output;
 
 
-import max.dirscan.config.OutputEntryProcessorConfig;
-import max.dirscan.output.buffer.SortedOutputEntriesBuffer;
+import max.dirscan.config.OutputEntryWritingConfig;
+import max.dirscan.output.writer.OutputEntryWriter;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.SortedSet;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 
 // singleton
@@ -15,15 +21,13 @@ public class OutputEntryProcessor {
 
     private boolean isInit = false;
 
-    private OutputEntryProcessorConfig config;
+    private LinkedBlockingQueue<OutputEntry> outputEntriesQueue = new LinkedBlockingQueue<>();
 
-    private LinkedBlockingQueue<OutputEntry> outputQueue = new LinkedBlockingQueue<>();
+    private ForkJoinPool queueFiller = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
-    private SortedOutputEntriesBuffer entriesBuffer;
+    private Thread writerManagerThread;
 
-    private Thread bufferFillerThread;
-
-    private BufferFiller bufferFiller;
+    private OutputEntryWriterManager writerManager;
 
     private OutputEntryProcessor() {
 
@@ -35,12 +39,10 @@ public class OutputEntryProcessor {
         return processor;
     }
 
-    public void init(OutputEntryProcessorConfig config) {
-        this.config = config;
-        this.entriesBuffer = new SortedOutputEntriesBuffer(config.bufferSize());
-        bufferFiller = new BufferFiller();
-        bufferFillerThread = new Thread(bufferFiller);
-        bufferFillerThread.start();
+    public void init(OutputEntryWritingConfig config) {
+        writerManager = new OutputEntryWriterManager(config);
+        writerManagerThread = new Thread(writerManager);
+        writerManagerThread.start();
         isInit = true;
     }
 
@@ -48,84 +50,112 @@ public class OutputEntryProcessor {
         return isInit;
     }
 
-    public void process(OutputEntry outputEntry) {
-        putOutputEntry(outputEntry);
+    public void process(Path file, BasicFileAttributes attrs) {
+        CompletableFuture.runAsync(() -> putOutputEntry(file, attrs), queueFiller);
     }
 
     public void performSorting() {
-        bufferFillerThread.interrupt();
-        if (bufferFiller.flushCounter == 1) {
+        while (queueFiller.hasQueuedSubmissions() || queueFiller.getActiveThreadCount() > 0) {
+            Thread.yield();
+        }
+        queueFiller.shutdown();
+        writerManagerThread.interrupt();
+        if (writerManager.flushCounter == 1) {
             return;
         }
     }
 
-    private void putOutputEntry(OutputEntry outputEntry) {
+    private void putOutputEntry(Path file, BasicFileAttributes attrs) {
         try {
-            outputQueue.put(outputEntry);
+            OutputEntry entry = OutputEntry.builder()
+                    .path(file)
+                    .attrs(attrs)
+                    .build();
+            outputEntriesQueue.put(entry);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     }
 
-    private OutputEntryWriter getEntryWriter(Path path) {
-        try {
-            Constructor<? extends OutputEntryWriter> constructor = config.getWriterClass().getConstructor(Path.class, OutputEntryProcessorConfig.class);
-            return constructor.newInstance(path, config);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private class BufferFiller implements Runnable {
+    private class OutputEntryWriterManager implements Runnable {
 
         private int flushCounter = 0;
 
+        private SortedOutputEntriesBuffer entriesBuffer;
+
+        private OutputEntryWritingConfig config;
+
+        public OutputEntryWriterManager(OutputEntryWritingConfig config) {
+            this.config = config;
+            this.entriesBuffer = new SortedOutputEntriesBuffer(config.outputEntryBufferSize());
+        }
+
         @Override
         public void run() {
+
+            Long start = System.currentTimeMillis();
             while (true) {
                 try {
-                    OutputEntry outputEntry = outputQueue.take();
+                    OutputEntry outputEntry = outputEntriesQueue.take();
                     if (entriesBuffer.put(outputEntry) < 0) {
                         flushBuffer();
                         entriesBuffer.put(outputEntry);
                     }
                 } catch (InterruptedException e) {
                     System.out.println("finishing buffer filler..");
-                    System.out.println("queue size = " + outputQueue.size());
                     finish();
+                    System.out.println("Writing took = " + (System.currentTimeMillis() - start));
                     return;
                 }
             }
         }
 
         private void finish() {
-            while (true) {
-                OutputEntry outputEntry = outputQueue.poll();
-                if(outputEntry == null) {
-                    if(entriesBuffer.getCurrentSize() > 0) {
-                        System.out.println("queue is empty... last flush");
-                        flushBuffer();
-                        return;
-                    }
-                } else {
-                    if (entriesBuffer.put(outputEntry) < 0) {
-                        System.out.println("buffer is full - flush");
-                        flushBuffer();
-                        entriesBuffer.put(outputEntry);
+            try {
+                while (true) {
+                    OutputEntry outputEntry = outputEntriesQueue.poll();
+                    if (outputEntry == null) {
+                        if (entriesBuffer.getCurrentSize() > 0) {
+                            flushBuffer();
+                        }
+
+                        if (flushCounter == 1) {
+                            Files.move(Paths.get(config.outputFilePath() + "_0"), Paths.get(config.outputFilePath()));
+                            return;
+                        }
+                    } else {
+                        if (entriesBuffer.put(outputEntry) < 0) {
+                            flushBuffer();
+                            entriesBuffer.put(outputEntry);
+                        }
                     }
                 }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
 
         private void flushBuffer() {
-            OutputEntryWriter writer;
             String filePath = config.outputFilePath();
-            if (flushCounter++ > 0) {
-                filePath = filePath + "_" + flushCounter;
-            }
+            filePath = filePath + "_" + flushCounter;
+            flushCounter++;
             Path file = Paths.get(filePath);
-            writer = getEntryWriter(file);
-            entriesBuffer.flush(writer::writeEntry);
+            SortedSet<OutputEntry> toFlush = entriesBuffer.takeAll();
+            flushToFile(file, toFlush);
+        }
+
+        private void flushToFile(Path file, SortedSet<OutputEntry> toFlush) {
+            OutputEntryWriter writer = getEntryWriter(file);
+            toFlush.forEach(writer::writeEntry);
+        }
+
+        private OutputEntryWriter getEntryWriter(Path path) {
+            try {
+                Constructor<? extends OutputEntryWriter> constructor = config.outputEntryWriterClass().getConstructor(Path.class, OutputEntryWritingConfig.class);
+                return constructor.newInstance(path, config);
+            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
 
     }

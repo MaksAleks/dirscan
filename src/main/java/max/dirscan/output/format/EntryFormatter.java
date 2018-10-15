@@ -1,4 +1,6 @@
-package max.dirscan.output;
+package max.dirscan.output.format;
+
+import max.dirscan.output.OutputEntry;
 
 public interface EntryFormatter {
 

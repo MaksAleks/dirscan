@@ -1,6 +1,5 @@
 package max.dirscan.scan;
 
-import max.dirscan.output.OutputEntry;
 import max.dirscan.output.OutputEntryProcessor;
 
 import java.io.IOException;
@@ -47,11 +46,7 @@ public class RecursiveFileTreeWalk extends RecursiveAction {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    OutputEntry entry = OutputEntry.builder()
-                            .path(file)
-                            .attrs(attrs)
-                            .build();
-                    processor.process(entry);
+                    processor.process(file, attrs);
                     return FileVisitResult.CONTINUE;
                 }
 
