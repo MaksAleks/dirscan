@@ -1,12 +1,14 @@
 package max.dirscan.config;
 
 import max.dirscan.output.DefaultEntryFormatter;
+import max.dirscan.output.DefaultOutputEntryWriter;
 import max.dirscan.output.EntryFormatter;
+import max.dirscan.output.OutputEntryWriter;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-public class DefaultOutputWriterConfig implements OutputWriterConfig {
+public class DefaultOutputEntryProcessorConfig implements OutputEntryProcessorConfig {
 
     private final String OUTPUT_FILE_DEFAULT_PATH = "./output.txt";
 
@@ -18,7 +20,7 @@ public class DefaultOutputWriterConfig implements OutputWriterConfig {
     }
 
     @Override
-    public EntryFormatter outputFileFormatter() {
+    public EntryFormatter outputEntryFormatter() {
         return formatter;
     }
 
@@ -30,5 +32,10 @@ public class DefaultOutputWriterConfig implements OutputWriterConfig {
     @Override
     public int bufferSize() {
         return 500000; //500 KByte
+    }
+
+    @Override
+    public Class<? extends OutputEntryWriter> getWriterClass() {
+        return DefaultOutputEntryWriter.class;
     }
 }

@@ -1,5 +1,8 @@
 package max.dirscan.scan;
 
+import max.dirscan.output.OutputEntry;
+import max.dirscan.output.OutputEntryProcessor;
+
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -14,8 +17,14 @@ public class RecursiveFileTreeWalk extends RecursiveAction {
 
     private final Path dir;
 
+    private OutputEntryProcessor processor;
+
     public RecursiveFileTreeWalk(Path dir) {
         this.dir = dir;
+        processor = OutputEntryProcessor.getProcessor();
+        if(!processor.isInit()) {
+            throw new RuntimeException("OutputEntryProcessor is not initialized");
+        }
     }
 
     @Override
@@ -38,7 +47,11 @@ public class RecursiveFileTreeWalk extends RecursiveAction {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    System.out.println(file + "\t" + Thread.currentThread());
+                    OutputEntry entry = OutputEntry.builder()
+                            .path(file)
+                            .attrs(attrs)
+                            .build();
+                    processor.process(entry);
                     return FileVisitResult.CONTINUE;
                 }
 

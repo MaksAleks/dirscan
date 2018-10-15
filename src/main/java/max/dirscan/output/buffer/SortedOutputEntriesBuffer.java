@@ -3,11 +3,10 @@ package max.dirscan.output.buffer;
 
 import max.dirscan.output.OutputEntry;
 
-import java.nio.file.Path;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class SortedOutputEntriesBuffer {
 
@@ -32,15 +31,15 @@ public class SortedOutputEntriesBuffer {
     }
 
 
-    public void flush(BiConsumer<OutputEntry, Path> consumer, Path file) {
+    public void flush(Consumer<OutputEntry> consumer) {
         currentSize = 0;
         for(OutputEntry entry: entries) {
-            consumer.accept(entry, file);
+            consumer.accept(entry);
         }
     }
 
-    public void flushAsync(BiConsumer<OutputEntry, Path> consumer, Path file) {
-        CompletableFuture.runAsync(() -> flush(consumer, file));
+    public void flushAsync(Consumer<OutputEntry> consumer) {
+        CompletableFuture.runAsync(() -> flush(consumer));
     }
 
     public int getCurrentSize() {
