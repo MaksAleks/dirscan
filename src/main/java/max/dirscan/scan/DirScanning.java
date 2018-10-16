@@ -1,6 +1,6 @@
 package max.dirscan.scan;
 
-import max.dirscan.output.OutputEntryProcessor;
+import max.dirscan.output.FilesProcessor;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -12,31 +12,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveAction;
 
-public class RecursiveFileTreeWalk extends RecursiveAction {
+public class DirScanning extends RecursiveAction {
 
     private final Path dir;
 
-    private OutputEntryProcessor processor;
+    private FilesProcessor processor;
 
-    public RecursiveFileTreeWalk(Path dir) {
+    public DirScanning(Path dir) {
         this.dir = dir;
-        processor = OutputEntryProcessor.getProcessor();
+        processor = FilesProcessor.getProcessor();
         if(!processor.isInit()) {
-            throw new RuntimeException("OutputEntryProcessor is not initialized");
+            throw new RuntimeException("FilesProcessor is not initialized");
         }
     }
 
     @Override
     protected void compute() {
-        final List<RecursiveFileTreeWalk> walks = new ArrayList<>();
+        final List<DirScanning> scanningList = new ArrayList<>();
         try {
             Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    if (!dir.equals(RecursiveFileTreeWalk.this.dir)) {
-                        RecursiveFileTreeWalk w = new RecursiveFileTreeWalk(dir);
+                    if (!dir.equals(DirScanning.this.dir)) {
+                        DirScanning w = new DirScanning(dir);
                         w.fork();
-                        walks.add(w);
+                        scanningList.add(w);
 
                         return FileVisitResult.SKIP_SUBTREE;
                     } else {
@@ -46,7 +46,7 @@ public class RecursiveFileTreeWalk extends RecursiveAction {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    processor.process(file, attrs);
+                    processor.process(file.toAbsolutePath().toString());
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -59,7 +59,7 @@ public class RecursiveFileTreeWalk extends RecursiveAction {
             e.printStackTrace();
         }
 
-        for (RecursiveFileTreeWalk w : walks) {
+        for (DirScanning w : scanningList) {
             w.join();
         }
     }

@@ -1,6 +1,6 @@
 package max.dirscan.scan;
 
-import max.dirscan.output.OutputEntryProcessor;
+import max.dirscan.output.FilesProcessor;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,11 +22,11 @@ public class DirScanner {
     public void scan() {
         System.out.println("scanning...");
         dirForScan.stream()
-                .map(RecursiveFileTreeWalk::new)
+                .map(DirScanning::new)
                 .forEach(scanPool::invoke);
 
         System.out.println("sorting...");
-        OutputEntryProcessor.getProcessor().performSorting();
+        FilesProcessor.getProcessor().finish();
         while (scanPool.hasQueuedSubmissions() || scanPool.getActiveThreadCount() > 0) {
             Thread.yield();
         }

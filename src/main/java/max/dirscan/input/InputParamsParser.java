@@ -9,7 +9,7 @@ public class InputParamsParser {
 
     private List<String> dirsToScan = new ArrayList<>();
 
-    private Pattern dirsToScanPattern = Pattern.compile("^(\\/)?([^\\/\0]+(\\/)?)+$");
+    private Pattern dirsToScanPattern = Pattern.compile("^(\\/)?([^\\/w]+(\\/)?)+$");
 
     public List<String> parse(String... args) {
         for(String arg : args) {
