@@ -1,10 +1,9 @@
 package max.dirscan.scan.filter;
 
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 
-public abstract class DirFilter implements ScanFilter {
+public abstract class DirFilter extends ScanFilter {
 
     protected List<Path> dirToFilter;
 
@@ -18,13 +17,4 @@ public abstract class DirFilter implements ScanFilter {
 
     @Override
     public abstract boolean filter(Path path);
-
-    public static DirFilter emptyFilter() {
-        return new DirFilter(Collections.emptyList()) {
-            @Override
-            public boolean filter(Path path) {
-                return false;
-            }
-        };
-    }
 }

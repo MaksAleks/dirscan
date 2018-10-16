@@ -1,5 +1,6 @@
 package max.dirscan.input;
 
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,13 +18,16 @@ public class InputParamsParser {
         matchers.add(unixPattern.matcher(""));
     }
 
-    private List<String> dirsToScan = new ArrayList<>();
+    public
 
-    public List<String> parse(String... params) {
+    private List<Path> dirsToScan = new ArrayList<>();
+    private List<Excluder> excluders;
+
+    public List<Path> parse(String... params) {
         for(String param : params) {
             boolean isDir = matchers.stream().anyMatch(matcher -> matcher.reset(param).matches());
             if(isDir) {
-                dirsToScan.add(param);
+                dirsToScan.add(Paths.get(param));
             } else {
                 return dirsToScan;
             }

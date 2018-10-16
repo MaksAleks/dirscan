@@ -6,11 +6,9 @@ import max.dirscan.scan.filter.FileFilter;
 import max.dirscan.scan.filter.ScanFilter;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
-import java.util.stream.Collectors;
 
 public class DirScanner {
 
@@ -20,10 +18,8 @@ public class DirScanner {
 
     private ForkJoinPool scanPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
-    public DirScanner(List<String> dirForScan) {
-        this.dirForScan = dirForScan.stream()
-                .map(Paths::get)
-                .collect(Collectors.toList());
+    public DirScanner(List<Path> dirForScan) {
+        this.dirForScan = dirForScan;
     }
 
 

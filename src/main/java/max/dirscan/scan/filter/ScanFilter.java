@@ -2,7 +2,24 @@ package max.dirscan.scan.filter;
 
 import java.nio.file.*;
 
-public interface ScanFilter {
+public abstract class ScanFilter {
 
-    public boolean filter(Path path);
+    public abstract boolean filter(Path path);
+
+    public abstract boolean isEmpty();
+
+    public static ScanFilter emptyFilter() {
+
+        return new ScanFilter() {
+            @Override
+            public boolean filter(Path path) {
+                return false;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return true;
+            }
+        };
+    }
 }

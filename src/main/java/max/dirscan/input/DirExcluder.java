@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DirExcluder {
+public class DirExcluder extends Excluder {
 
     private final String KEY = "-";
 
@@ -28,6 +28,11 @@ public class DirExcluder {
     }
 
     private List<Path> dirsToExclude = new ArrayList<>();
+
+    @Override
+    protected String getKey() {
+        return KEY;
+    }
 
     public DirFilter exclude(String... params) {
         List<String> listParams = Arrays.asList(params);
