@@ -43,16 +43,4 @@ public class SortedFilesBuffer {
         countOfElements = 0;
         return result;
     }
-
-    public static void main(String[] args) {
-
-        String s1 = "/home/maxim/.IntelliJIdea2016.3/config/tasks/RISKI_TEST.tasks.zip";
-        String s2 = "/home/maxim/.IntelliJIdea2016.3/config/tasks/Riski.contexts.zip";
-
-        SortedFilesBuffer buffer = new SortedFilesBuffer(5000);
-        buffer.put(s1);
-        buffer.put(s2);
-
-        buffer.takeAll().forEach(System.out::println);
-    }
 }

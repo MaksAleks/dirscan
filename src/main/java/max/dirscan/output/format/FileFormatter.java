@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 
 public abstract class FileFormatter {
 
@@ -20,7 +21,7 @@ public abstract class FileFormatter {
         this.charset = charset;
     }
 
-    protected abstract String formatEntry(Path path) throws IOException;
+    protected abstract String formatEntry(Path path, BasicFileAttributes attrs) throws IOException;
 
     public void format() {
         String formattedFilePath = file.toFile().getAbsolutePath() + "_formatted";
@@ -32,8 +33,9 @@ public abstract class FileFormatter {
             String filePath;
             while ((filePath = reader.readLine()) != null) {
                 Path path = Paths.get(filePath);
-                String formattedEntry = formatEntry(path);
-                if(!formattedEntry.isEmpty()){
+                if(Files.exists(path)){
+                    BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+                    String formattedEntry = formatEntry(path, attrs);
                     writer.write(formattedEntry);
                 }
             }
