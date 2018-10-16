@@ -1,11 +1,12 @@
 package max.dirscan;
 
-import max.dirscan.config.DefaultOutputEntryWritingConfig;
-import max.dirscan.input.DirExcluder;
+import max.dirscan.input.Excluder;
 import max.dirscan.input.InputParamsParser;
-import max.dirscan.output.FilesProcessor;
+import max.dirscan.input.ParseResult;
 import max.dirscan.scan.DirScanner;
-import max.dirscan.scan.filter.DirFilter;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class Main {
 
@@ -20,12 +21,36 @@ public class Main {
                 "-",
                 "/home/maxim/.gradle/"};
 
-        FilesProcessor.getProcessor().init(new DefaultOutputEntryWritingConfig());
+//        FilesProcessor.getProcessor().init(new DefaultOutputEntryWritingConfig());
+//        InputParamsParser paramsParser = new InputParamsParser();
+//        DirScanner scanner = new DirScanner(paramsParser.parse(testArgs));
+//        Excluder excluder = new DirExcluder();
+//        ExcludeFilter filter = excluder.exclude(testArgs);
+//        scanner.registerFilter(filter);
+//        scanner.scan();
+
+
+        String testRegex = args[0];
+        Pattern pattern = Pattern.compile(testRegex);
+        if(pattern.matcher("/home/maxim/.chache/").matches()) {
+
+            System.out.println(testRegex + " matches " + "/home/maxim/.chache/");
+        }
+    }
+
+}
+
+
+class Application {
+
+    private List<Excluder> excluders;
+
+    private DirScanner scanner;
+
+    public void init(String... inputParams) {
+
         InputParamsParser paramsParser = new InputParamsParser();
-        DirScanner scanner = new DirScanner(paramsParser.parse(testArgs));
-        DirExcluder excluder = new DirExcluder();
-        DirFilter dirFilter = excluder.exclude(testArgs);
-        scanner.registerFilter(dirFilter);
-        scanner.scan();
+        ParseResult parseResult = paramsParser.parse(inputParams);
+
     }
 }

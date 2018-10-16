@@ -1,6 +1,6 @@
 package max.dirscan.input;
 
-import max.dirscan.scan.filter.ScanFilter;
+import max.dirscan.scan.filter.ExcludeFilter;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -15,9 +15,9 @@ public abstract class Excluder {
 
     protected abstract List<Pattern> excludePatterns();
 
-    protected abstract ScanFilter createFilter(List<String> excludeFiles);
+    protected abstract ExcludeFilter createFilter(List<String> excludeFiles);
 
-    public final ScanFilter exclude(String... params) {
+    public final ExcludeFilter exclude(String... params) {
         List<String> listParams = Arrays.asList(params);
         List<String> excludeFiles = new LinkedList<>();
 

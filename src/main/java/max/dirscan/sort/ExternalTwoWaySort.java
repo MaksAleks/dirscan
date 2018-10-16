@@ -9,8 +9,8 @@ import java.util.PriorityQueue;
 
 public class ExternalTwoWaySort {
 
-    public static long mergeSortedFiles(List<File> files, File outputfile,
-                                        final Comparator<String> cmp,
+    public static long mergeSortedFiles(List<File> files, File outputFile,
+                                        final Comparator<String> comparator,
                                         Charset cs,
                                         boolean append) throws IOException {
         ArrayList<BinaryFileBuffer> bfbs = new ArrayList<>();
@@ -22,8 +22,8 @@ public class ExternalTwoWaySort {
             bfbs.add(bfb);
         }
         BufferedWriter fbw = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(outputfile, append), cs));
-        long rowcounter = mergeSortedFiles(fbw, cmp, bfbs);
+                new FileOutputStream(outputFile, append), cs));
+        long rowcounter = mergeSortedFiles(fbw, comparator, bfbs);
         for (File f : files) {
             f.delete();
         }
@@ -31,7 +31,7 @@ public class ExternalTwoWaySort {
     }
 
     public static long mergeSortedFiles(BufferedWriter fbw,
-                                        final Comparator<String> cmp,
+                                        final Comparator<String> comparator,
                                         List<BinaryFileBuffer> buffers) throws IOException {
 
         PriorityQueue<BinaryFileBuffer> pq = new PriorityQueue<>(
@@ -39,7 +39,7 @@ public class ExternalTwoWaySort {
             @Override
             public int compare(BinaryFileBuffer i,
                                BinaryFileBuffer j) {
-                return cmp.compare(i.peek(), j.peek());
+                return comparator.compare(i.peek(), j.peek());
             }
         });
         for (BinaryFileBuffer bfb : buffers) {

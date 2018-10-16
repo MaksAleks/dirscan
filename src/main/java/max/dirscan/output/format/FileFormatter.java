@@ -23,7 +23,7 @@ public abstract class FileFormatter {
 
     protected abstract String formatEntry(Path path, BasicFileAttributes attrs) throws IOException;
 
-    public void format() {
+    public final void format() {
         String formattedFilePath = file.toFile().getAbsolutePath() + "_formatted";
         Path formattedFile = Paths.get(formattedFilePath);
         try (

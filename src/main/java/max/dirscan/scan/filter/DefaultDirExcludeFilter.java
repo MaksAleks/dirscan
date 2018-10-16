@@ -4,17 +4,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class DefaultDirFilter extends DirFilter {
+public class DefaultDirExcludeFilter extends DirExcludeFilter {
 
-    public DefaultDirFilter(List<Path> dirToFilter) {
-        super(dirToFilter);
+    public DefaultDirExcludeFilter(List<Path> dirsToFilter) {
+        super(dirsToFilter);
     }
 
     @Override
     public boolean filter(Path path) {
         if (Files.isDirectory(path)) {
-            return dirToFilter.contains(path) ||
-                    dirToFilter.stream()
+            return dirsToFilter.contains(path) ||
+                    dirsToFilter.stream()
                             .anyMatch(parent -> isParent(path, parent));
 
         }

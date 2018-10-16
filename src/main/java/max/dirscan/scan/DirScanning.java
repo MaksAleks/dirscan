@@ -1,8 +1,8 @@
 package max.dirscan.scan;
 
 import max.dirscan.output.FilesProcessor;
-import max.dirscan.scan.filter.DirFilter;
-import max.dirscan.scan.filter.FileFilter;
+import max.dirscan.scan.filter.DirExcludeFilter;
+import max.dirscan.scan.filter.FileExcludeFilter;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -20,14 +20,14 @@ public class DirScanning extends RecursiveAction {
 
     private FilesProcessor processor;
 
-    private List<DirFilter> dirFilters;
+    private List<DirExcludeFilter> dirExcludeFilters;
 
-    private List<FileFilter> fileFilters;
+    private List<FileExcludeFilter> fileExcludeFilters;
 
-    public DirScanning(Path dir, List<DirFilter> dirFilters, List<FileFilter> fileFilters) {
+    public DirScanning(Path dir, List<DirExcludeFilter> dirExcludeFilters, List<FileExcludeFilter> fileExcludeFilters) {
         this.dir = dir;
-        this.dirFilters = dirFilters;
-        this.fileFilters = fileFilters;
+        this.dirExcludeFilters = dirExcludeFilters;
+        this.fileExcludeFilters = fileExcludeFilters;
         processor = FilesProcessor.getProcessor();
         if(!processor.isInit()) {
             throw new RuntimeException("FilesProcessor is not initialized");
@@ -41,12 +41,12 @@ public class DirScanning extends RecursiveAction {
             Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    boolean skip = dirFilters.stream().anyMatch(f -> f.filter(dir));
+                    boolean skip = dirExcludeFilters.stream().anyMatch(f -> f.filter(dir));
                     if(skip) {
                         return FileVisitResult.SKIP_SUBTREE;
                     }
                     if (!dir.equals(DirScanning.this.dir)) {
-                        DirScanning w = new DirScanning(dir, dirFilters, fileFilters);
+                        DirScanning w = new DirScanning(dir, dirExcludeFilters, fileExcludeFilters);
                         w.fork();
                         scanningList.add(w);
                         return FileVisitResult.SKIP_SUBTREE;
@@ -57,7 +57,7 @@ public class DirScanning extends RecursiveAction {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    boolean process = fileFilters.stream().noneMatch(f -> f.filter(file));
+                    boolean process = fileExcludeFilters.stream().noneMatch(f -> f.filter(file));
                     if(process) {
                         processor.process(file.toAbsolutePath().toString());
                     }

@@ -1,56 +1,48 @@
 package max.dirscan.input;
 
 
-import max.dirscan.scan.filter.DefaultDirFilter;
-import max.dirscan.scan.filter.DirFilter;
+import max.dirscan.scan.filter.DefaultDirExcludeFilter;
+import max.dirscan.scan.filter.ExcludeFilter;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class DirExcluder extends Excluder {
 
     private final String KEY = "-";
 
-    private final Pattern winPattern1 = Pattern.compile("^([a-zA-Z]\\:\\\\|\\\\)(\\\\[\\w.\\-_\\s\\\\]+)\\\\$");
-    private final Pattern winPattern2 = Pattern.compile("^([a-zA-Z]\\:\\/)(.+)\\/$");
-    private final Pattern unixPattern = Pattern.compile("^(\\/)(.+)\\/$");
-    private List<Matcher> matchers = new ArrayList<>(3);
-
-    {
-        matchers.add(winPattern1.matcher(""));
-        matchers.add(winPattern2.matcher(""));
-        matchers.add(unixPattern.matcher(""));
-    }
-
-    private List<Path> dirsToExclude = new ArrayList<>();
+    private final Pattern WIN_PATH = Pattern.compile("^([a-zA-Z]\\:\\\\|\\\\)(\\\\[\\w\\.\\-\\_\\s]+)+\\\\$");
+    private final Pattern WIN_PATH_2 = Pattern.compile("^([a-zA-Z]\\:)(\\/[\\w-_.\\s]+)+\\/$");
+    private final Pattern UNIX_PATH = Pattern.compile("^\\/([\\w-_.\\s\\\\]+\\/)*$");
 
     @Override
     protected String getKey() {
         return KEY;
     }
 
-    public DirFilter exclude(String... params) {
-        List<String> listParams = Arrays.asList(params);
-        if(!listParams.contains(KEY)) {
-            return DirFilter.emptyFilter();
-        }
-        listParams = listParams.subList(listParams.indexOf(KEY)+1, listParams.size());
-        for (String param : listParams) {
-            boolean isDir = matchers.stream().anyMatch(matcher -> matcher.reset(param).matches());
-            if (isDir) {
-                dirsToExclude.add(Paths.get(param));
-            } else {
-                return new DefaultDirFilter(dirsToExclude);
-            }
-        }
-        if(dirsToExclude.isEmpty()) {
-            return DirFilter.emptyFilter();
-        }
-        return new DefaultDirFilter(dirsToExclude);
+    @Override
+    protected List<Pattern> excludePatterns() {
+        List<Pattern> patterns = new LinkedList<>();
+        patterns.add(WIN_PATH);
+        patterns.add(WIN_PATH_2);
+        patterns.add(UNIX_PATH);
+        return patterns;
     }
+
+    @Override
+    protected ExcludeFilter createFilter(List<String> excludeFiles) {
+        if (excludeFiles.isEmpty()) {
+            return ExcludeFilter.emptyFilter();
+        } else {
+            List<Path> dirsToFilter = excludeFiles.stream()
+                    .map(Paths::get)
+                    .collect(Collectors.toList());
+            return new DefaultDirExcludeFilter(dirsToFilter);
+        }
+    }
+
 }
