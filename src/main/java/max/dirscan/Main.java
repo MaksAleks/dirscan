@@ -1,56 +1,25 @@
 package max.dirscan;
 
-import max.dirscan.input.Excluder;
-import max.dirscan.input.InputParamsParser;
-import max.dirscan.input.ParseResult;
-import max.dirscan.scan.DirScanner;
-
-import java.util.List;
-import java.util.regex.Pattern;
+import max.dirscan.config.ApplicationConfig;
+import max.dirscan.config.DefaultApplicationConfig;
 
 public class Main {
 
     public static void main(String[] args) {
 
         String[] testArgs = {
-                "/home/maxim/Documents/",
-                "/home/maxim/Загрузки/",
-                "/home/maxim/etc/",
-                "/home/maxim/usim/",
-                "/home/maxim/.gradle/",
+                "/home/maxim/",
                 "-",
-                "/home/maxim/.gradle/"};
+                "/home/maxim/.gradle/",
+                "/home/maxim/.cache/"
+        };
 
-//        FilesProcessor.getProcessor().init(new DefaultOutputEntryWritingConfig());
-//        InputParamsParser paramsParser = new InputParamsParser();
-//        DirScanner scanner = new DirScanner(paramsParser.parse(testArgs));
-//        Excluder excluder = new DirExcluder();
-//        ExcludeFilter filter = excluder.exclude(testArgs);
-//        scanner.registerFilter(filter);
-//        scanner.scan();
+        String[] testArgs2 = {"/home/maxim/"};
 
-
-        String testRegex = args[0];
-        Pattern pattern = Pattern.compile(testRegex);
-        if(pattern.matcher("/home/maxim/.chache/").matches()) {
-
-            System.out.println(testRegex + " matches " + "/home/maxim/.chache/");
-        }
+        Application application = Application.getApplication();
+        ApplicationConfig config = new DefaultApplicationConfig();
+        application.init(config);
+        application.start(testArgs);
     }
 
-}
-
-
-class Application {
-
-    private List<Excluder> excluders;
-
-    private DirScanner scanner;
-
-    public void init(String... inputParams) {
-
-        InputParamsParser paramsParser = new InputParamsParser();
-        ParseResult parseResult = paramsParser.parse(inputParams);
-
-    }
 }

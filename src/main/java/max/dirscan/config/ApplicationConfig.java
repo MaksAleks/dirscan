@@ -1,22 +1,29 @@
 package max.dirscan.config;
 
+import max.dirscan.input.Excluder;
+import max.dirscan.input.InputParamsValidator;
 import max.dirscan.output.format.FileFormatter;
 
 import java.nio.charset.Charset;
+import java.util.List;
 
-import static max.dirscan.config.OutputEntryWritingConfig.Size.MByte;
+import static max.dirscan.config.ApplicationConfig.Size.MByte;
 
-public interface OutputEntryWritingConfig {
+public interface ApplicationConfig {
 
     String outputFilePath();
 
     Charset outputFileCharset();
 
+    FileFormatter fileFormatter();
+
+    List<Excluder> inputParamsExcluders();
+
+    List<InputParamsValidator> inputParamsValidators();
+
     default int outputEntryBufferSize() {
         return 5*MByte;
     }
-
-    FileFormatter entryFormatter();
 
     public class Size {
 

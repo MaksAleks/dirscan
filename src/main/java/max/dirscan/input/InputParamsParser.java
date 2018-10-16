@@ -27,6 +27,18 @@ public class InputParamsParser {
     List<Path> dirsToScan = new LinkedList<>();
     List<Excluder> excluders = new LinkedList<>();
 
+    public InputParamsParser() {
+
+    }
+
+    public InputParamsParser(List<Excluder> excluders) {
+        this.excluders.addAll(excluders);
+    }
+
+    public void registerExcluders(List<Excluder> excluders) {
+        this.excluders.addAll(excluders);
+    }
+
     public void registerExcluder(Excluder excluder) {
         excluders.add(excluder);
     }
@@ -54,6 +66,9 @@ public class InputParamsParser {
                 iterator.remove();
             }
         }
+        excludeFilters = excludeFilters.stream()
+                .filter(f -> !f.isEmpty())
+                .collect(Collectors.toList());
 
         return new ParseResult(dirsToScan, excludeFilters);
     }

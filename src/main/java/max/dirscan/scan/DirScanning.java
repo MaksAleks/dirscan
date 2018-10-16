@@ -1,5 +1,6 @@
 package max.dirscan.scan;
 
+import max.dirscan.exceptions.InitException;
 import max.dirscan.output.FilesProcessor;
 import max.dirscan.scan.filter.DirExcludeFilter;
 import max.dirscan.scan.filter.FileExcludeFilter;
@@ -29,8 +30,8 @@ public class DirScanning extends RecursiveAction {
         this.dirExcludeFilters = dirExcludeFilters;
         this.fileExcludeFilters = fileExcludeFilters;
         processor = FilesProcessor.getProcessor();
-        if(!processor.isInit()) {
-            throw new RuntimeException("FilesProcessor is not initialized");
+        if(!processor.isStared()) {
+            throw new InitException("Cannot start scanning: File Processor hasn't been started yet");
         }
     }
 

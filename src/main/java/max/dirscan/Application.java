@@ -1,0 +1,86 @@
+package max.dirscan;
+
+import max.dirscan.config.ApplicationConfig;
+import max.dirscan.exceptions.InitException;
+import max.dirscan.exceptions.ValidationParamsException;
+import max.dirscan.input.Excluder;
+import max.dirscan.input.InputParamsParser;
+import max.dirscan.input.InputParamsValidator;
+import max.dirscan.input.ParseResult;
+import max.dirscan.output.FilesProcessor;
+import max.dirscan.output.Timer;
+import max.dirscan.scan.DirScanner;
+
+import java.util.List;
+
+//Singleton
+class Application {
+
+    private boolean isInit = false;
+
+    private ApplicationConfig config;
+
+    private Timer timer = new Timer();
+
+    private DirScanner scanner;
+
+    private InputParamsParser paramsParser;
+
+    private FilesProcessor processor;
+
+    private List<InputParamsValidator> validators;
+
+    public void init(ApplicationConfig config) {
+        this.config = config;
+        validators = config.inputParamsValidators();
+        List<Excluder> excluders = config.inputParamsExcluders();
+        paramsParser = new InputParamsParser(excluders);
+        scanner = new DirScanner();
+        processor = FilesProcessor.getProcessor();
+        processor.init(config);
+        isInit = true;
+    }
+
+    public void start(String... inputParams) {
+        try {
+            System.out.println("Application started");
+            timer.start();
+            if(!isInit) {
+                throw new InitException("Cannot start application: application is not initialized");
+            }
+            validateParams(inputParams);
+            processor.start();
+            ParseResult result = paramsParser.parse(inputParams);
+            scanner.init(result);
+            scanner.startScan();
+            processor.waitForComplete();
+        } catch (ValidationParamsException | InitException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Shutting down the application");
+        } catch (Exception e) {
+            System.out.println("\nUnexpexpected error occured:");
+            e.printStackTrace();
+        } finally {
+            long execTime = timer.stop();
+            System.out.println("\nApplication finished: execution time = " + execTime);
+            shutdown();
+        }
+
+    }
+
+    private void validateParams(String... inputParams) {
+        validators.forEach(validator -> validator.validate(inputParams));
+    }
+
+    private void shutdown() {
+        processor.finish();
+    }
+
+    private Application() { }
+
+    private static Application application = new Application();
+
+    public static Application getApplication() {
+        return application;
+    }
+}

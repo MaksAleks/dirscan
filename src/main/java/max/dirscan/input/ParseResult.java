@@ -9,13 +9,21 @@ import java.nio.file.*;
 
 public class ParseResult {
 
-    private List<Path> dirsToScan;
+    private final List<Path> dirsToScan;
 
-    private List<ExcludeFilter> filters;
+    private final List<ExcludeFilter> filters;
 
     public ParseResult(List<Path> dirsToScan, List<ExcludeFilter> filters) {
         this.dirsToScan = dirsToScan;
         this.filters = filters;
+    }
+
+    public List<ExcludeFilter> getFilters() {
+        return filters;
+    }
+
+    public List<Path> getDirsToScan() {
+        return dirsToScan;
     }
 
     @Override
