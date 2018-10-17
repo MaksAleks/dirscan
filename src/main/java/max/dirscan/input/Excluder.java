@@ -64,10 +64,18 @@ public abstract class Excluder {
     public final ExcludeFilter exclude(String... params) {
         List<String> listParams = Arrays.asList(params);
 
+        /**
+         * Если лист параметров не содержит ключа для данного Excluder'а
+         * тогда вызываем метод создания фильтра на пустом списке.
+         * В данном случае создается т.н. пустой фильтр {@link ExcludeFilter#emptyFilter()}
+         */
         if (!listParams.contains(getKey())) {
             return createFilter(excludeFiles);
         }
 
+        /**
+         * Получаем список всех параметров начиная со следующего после ключа
+         */
         int keyIndex = listParams.indexOf(getKey());
         listParams = listParams.subList(keyIndex + 1, listParams.size());
         for (String param : listParams) {
@@ -77,6 +85,9 @@ public abstract class Excluder {
                 // и значит все параметры для этого Excluder'а были обработаны
                 break;
             }
+            /**
+             * Валидируем параметр и в случае успеха добавляем его в список файлов для исключения
+             */
             validateAndAdd(param, params);
         }
         return createFilter(excludeFiles);
