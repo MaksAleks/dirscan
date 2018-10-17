@@ -46,7 +46,7 @@ public class DirExcluder extends Excluder {
         if (excludeFiles.isEmpty()) {
             return ExcludeFilter.emptyFilter();
         } else {
-            return new DefaultDirExcludeFilter(excludeFiles);
+            return new DefaultDirExcludeFilter(excludeFiles, new DirsValidator());
         }
     }
 

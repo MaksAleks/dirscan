@@ -15,4 +15,8 @@ public class DirsValidator {
     public boolean isDirectory(Path path) {
         return Files.isDirectory(path);
     }
+
+    public boolean isNotDirectory(Path path) {
+        return !Files.isDirectory(path);
+    }
 }

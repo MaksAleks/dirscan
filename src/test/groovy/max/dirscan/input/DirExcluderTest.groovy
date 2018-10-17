@@ -26,7 +26,7 @@ class DirExcluderTest extends Specification {
         print(ex.getMessage())
     }
 
-    def "Ошибка валидации если один из параметров - несуществующая директория"() {
+    def "Ошибка валидации если один из параметров после ключа '-' несуществующая директория"() {
 
         given: "DirExcluder"
         DirsValidator mock = Mock()
@@ -68,7 +68,7 @@ class DirExcluderTest extends Specification {
         when: "DirExcluder парсит параметры для исключения директорий из сканирования"
         ExcludeFilter filter = excluder.exclude(validParams);
 
-        then: "Получаем ExcludeFilter"
+        then: "Получаем DirExcludeFilter"
         filter instanceof DirExcludeFilter
 
         and: "В котором присутствуют директории для фильтрации"
