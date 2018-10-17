@@ -1,22 +1,19 @@
 package max.dirscan.output.format;
 
-import max.dirscan.output.OutputEntry;
-
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
-public class DefaultEntryFormatter implements EntryFormatter {
+public class DefaultFileFormatter extends FileFormatter {
 
-    @Override
-    public String getEntryDelimiterPattern() {
-        return "(?<=\\])(?=\\[)";
+    public DefaultFileFormatter(Path file, Charset charset) {
+        super(file, charset);
     }
 
     @Override
-    public String formatEntry(OutputEntry outputEntry) {
+    public String formatEntry(Path path, BasicFileAttributes attrs) throws IOException {
 
-        Path path = outputEntry.getPath();
-        BasicFileAttributes attrs = outputEntry.getAttrs();
         String name = path.toAbsolutePath().toString();
         String date = attrs.creationTime().toString();
         Long size = attrs.size();
@@ -31,5 +28,6 @@ public class DefaultEntryFormatter implements EntryFormatter {
                 " size=" +
                 size +
                 "]";
+
     }
 }

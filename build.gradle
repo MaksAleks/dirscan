@@ -6,11 +6,18 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'max.dirscan.Main'
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
