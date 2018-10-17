@@ -10,15 +10,16 @@ import max.dirscan.output.format.FileFormatter;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.Collections;
 import java.util.List;
 
 public class DefaultApplicationConfig implements ApplicationConfig {
 
     @Override
-    public String outputFilePath() {
-        return "./output.txt";
+    public Path outputFilePath()
+    {
+        return Paths.get("./result.txt").toAbsolutePath().normalize();
     }
 
     @Override
@@ -28,7 +29,7 @@ public class DefaultApplicationConfig implements ApplicationConfig {
 
     @Override
     public FileFormatter fileFormatter() {
-        return new DefaultFileFormatter(Paths.get(outputFilePath()), outputFileCharset());
+        return new DefaultFileFormatter(outputFilePath(), outputFileCharset());
     }
 
     @Override

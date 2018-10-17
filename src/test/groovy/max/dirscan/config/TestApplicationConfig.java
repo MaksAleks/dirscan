@@ -17,8 +17,8 @@ import java.util.List;
 
 public class TestApplicationConfig implements ApplicationConfig {
     @Override
-    public String outputFilePath() {
-        return "./test/output.txt";
+    public Path outputFilePath() {
+        return Paths.get("./test/result.txt").toAbsolutePath().normalize();
     }
 
     @Override
@@ -28,7 +28,7 @@ public class TestApplicationConfig implements ApplicationConfig {
 
     @Override
     public FileFormatter fileFormatter() {
-        return new FileFormatter(Paths.get(outputFilePath()), outputFileCharset()) {
+        return new FileFormatter(outputFilePath(), outputFileCharset()) {
 
             @Override
             public String formatEntry(Path path, BasicFileAttributes attrs) throws IOException {

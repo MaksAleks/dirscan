@@ -49,7 +49,7 @@ class Application {
             if(!isInit) {
                 throw new InitException("Cannot start application: application is not initialized");
             }
-            Files.deleteIfExists(Paths.get(config.outputFilePath()));
+            Files.deleteIfExists(config.outputFilePath());
             processor.start();
             ParseResult result = paramsParser.parse(inputParams);
             scanner.init(result);

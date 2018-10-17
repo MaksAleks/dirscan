@@ -5,13 +5,14 @@ import max.dirscan.input.InputParamsParser;
 import max.dirscan.output.format.FileFormatter;
 
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.List;
 
 import static max.dirscan.config.ApplicationConfig.Size.MByte;
 
 public interface ApplicationConfig {
 
-    String outputFilePath();
+    Path outputFilePath();
 
     Charset outputFileCharset();
 

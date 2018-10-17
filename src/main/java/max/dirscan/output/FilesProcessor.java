@@ -116,16 +116,19 @@ public class FilesProcessor {
                 while (true) {
                     String file = filesQueue.poll();
                     if (file == null) {
+                        Path sortedFile = Paths.get(config.outputFilePath().toString() + "_sorted");
+                        Files.deleteIfExists(sortedFile);
                         if (buffer.getCurrentSize() > 0) {
                             flushBuffer();
                         }
                         if (flushCounter == 1) {
-                            Files.move(Paths.get(config.outputFilePath() + "_0"), Paths.get(config.outputFilePath()));
+                            String temp0 = config.outputFilePath().toString() + "_0";
+                            Files.move(Paths.get(temp0), sortedFile);
                         } else {
-                            performSorting();
+                            performSortingTo(sortedFile);
                         }
                         FileFormatter formatter = config.fileFormatter();
-                        formatter.format();
+                        formatter.format(sortedFile);
                         return;
                     } else {
                         if (buffer.put(file) < 0) {
@@ -141,18 +144,18 @@ public class FilesProcessor {
             }
         }
 
-        private void performSorting() throws IOException {
+        private void performSortingTo(Path sortedFile) throws IOException {
             ExternalMergeSort sort = new ExternalMergeSort();
             sort.mergeSortedFiles(
                     sortedFiles,
-                    Paths.get(config.outputFilePath()).toFile(),
+                    sortedFile.toAbsolutePath().toFile(),
                     Comparator.comparing(String::toLowerCase),
                     config.outputFileCharset(), true
             );
         }
 
         private void flushBuffer() {
-            String filePath = config.outputFilePath();
+            String filePath = config.outputFilePath().toString();
             filePath = filePath + "_" + flushCounter;
             flushCounter++;
             Path file = Paths.get(filePath);
