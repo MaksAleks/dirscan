@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Objects;
 import java.nio.file.*;
 
+/**
+ * Класс, в котором хранится результат парсинга входных параметров
+ */
 public class ParseResult {
 
     private final List<Path> dirsToScan;

@@ -7,6 +7,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
+/**
+ * Класс, реализующий алгоритм слияния для расширенной сортировки слянием
+ */
 public class ExternalMergeSort {
 
     public long mergeSortedFiles(List<File> files, File outputFile,
@@ -14,6 +17,7 @@ public class ExternalMergeSort {
                                         Charset cs,
                                         boolean append) throws IOException {
         ArrayList<BinaryFileBuffer> bfbs = new ArrayList<>();
+        // Для каждого файла создаем обертку BinaryFileBuffer
         for (File f : files) {
             InputStream in = new FileInputStream(f);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, cs));

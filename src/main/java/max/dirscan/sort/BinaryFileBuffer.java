@@ -3,6 +3,9 @@ package max.dirscan.sort;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+/**
+ * Класс обертка для BufferedReader
+ */
 public final class BinaryFileBuffer {
 
     public BufferedReader fbr;
@@ -22,16 +25,19 @@ public final class BinaryFileBuffer {
         return this.cache == null;
     }
 
+    // Возвратить текущую строчку
     public String peek() {
         return this.cache;
     }
 
+    // Вытянуть новую строчку и возвратить старую
     public String pop() throws IOException {
         String answer = peek();// make a copy
         reload();
         return answer;
     }
 
+    // получаем новую строчку из буфера
     private void reload() throws IOException {
         this.cache = this.fbr.readLine();
     }
