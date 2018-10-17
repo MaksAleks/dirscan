@@ -32,17 +32,17 @@ class DirScannerTest extends Specification {
         ApplicationConfig config = new TestApplicationConfig();
 
         and: "Выходной файл"
-        Path outputFile = Paths.get(config.outputFilePath())
+        Path outputFile = config.outputFilePath()
 
         and: "Директория для сканирования"
-        Path dirToScan = Paths.get("./test/scan/")
+        Path dirToScan = Paths.get("./test/scan/").toAbsolutePath().normalize()
         Files.createDirectories(dirToScan.getParent())
         Files.createDirectories(dirToScan)
 
         and: "Файлы для сканирования"
-        Path fileA = Paths.get("./test/scan/fileA.txt")
-        Path fileB = Paths.get("./test/scan/fileB.txt")
-        Path fileC = Paths.get("./test/scan/fileC.txt")
+        Path fileA = Paths.get("./test/scan/fileA.txt").toAbsolutePath().normalize()
+        Path fileB = Paths.get("./test/scan/fileB.txt").toAbsolutePath().normalize()
+        Path fileC = Paths.get("./test/scan/fileC.txt").toAbsolutePath().normalize()
         Files.createFile(fileB)
         Files.createFile(fileC)
         Files.createFile(fileA)
@@ -78,12 +78,12 @@ class DirScannerTest extends Specification {
         AlphabeticalOrderValidator.validate(outputFile.toFile().getAbsolutePath())
 
         cleanup:
-        Files.deleteIfExists(fileA)
-        Files.deleteIfExists(fileB)
-        Files.deleteIfExists(fileC)
+        fileA.toFile().deleteOnExit()
+        fileB.toFile().deleteOnExit()
+        fileC.toFile().deleteOnExit()
 
-        Files.deleteIfExists(outputFile)
-        Files.deleteIfExists(dirToScan)
-        Files.deleteIfExists(dirToScan.getParent())
+        outputFile.toFile().deleteOnExit();
+        dirToScan.toFile().deleteOnExit()
+        dirToScan.getParent().toFile().deleteOnExit()
     }
 }

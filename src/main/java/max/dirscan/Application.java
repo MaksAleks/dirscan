@@ -10,9 +10,14 @@ import max.dirscan.output.Timer;
 import max.dirscan.scan.DirScanner;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 //Singleton
+
+/**
+ * Главный класс приложения. С него начинается вся работа
+ * Поведение приложения зависит от его конфигурации {@link max.dirscan.config.ApplicationConfig}
+ *
+ */
 class Application {
 
     private boolean isInit = false;
@@ -28,6 +33,13 @@ class Application {
     private FilesProcessor processor;
 
 
+    /**
+     * Метод инициализации приложения
+     * Из конфигурации считываются основные параметры
+     * и создаются основные объекты отвечающие за работу приложения
+     *
+     * @param config - конфигурация приложения {@link ApplicationConfig}
+     */
     public void init(ApplicationConfig config) {
         this.config = config;
 
@@ -42,6 +54,10 @@ class Application {
         isInit = true;
     }
 
+    /**
+     * Метод старта приложения
+     * @param inputParams - входящие параметры
+     */
     public void start(String... inputParams) {
         try {
             System.out.println("Application started");
@@ -49,7 +65,7 @@ class Application {
             if(!isInit) {
                 throw new InitException("Cannot start application: application is not initialized");
             }
-            Files.deleteIfExists(Paths.get(config.outputFilePath()));
+            Files.deleteIfExists(config.outputFilePath());
             processor.start();
             ParseResult result = paramsParser.parse(inputParams);
             scanner.init(result);

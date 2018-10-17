@@ -4,6 +4,9 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
+/**
+ * класс ошибок возникающих на этапе парсинга входящих параметров
+ */
 public class ValidationParamsException extends RuntimeException {
 
     private String[] params;

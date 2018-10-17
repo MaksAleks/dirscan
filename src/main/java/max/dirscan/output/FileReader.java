@@ -1,9 +1,7 @@
 package max.dirscan.output;
 
 
-import java.io.BufferedReader;
-import java.io.Closeable;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 

@@ -12,13 +12,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
+/**
+ * Класс отвечающий за инициализацию и старта процесса сканирования
+ * Он создает задачи {@link DirScanning}, сканирующие директории по приципу Fork Join
+ */
 public final class DirScanner {
 
     private boolean isInit = false;
+    // Директории для сканирования
     private List<Path> dirForScan;
+    // Фильтры директорий
     private List<DirExcludeFilter> dirExcludeFilters = new LinkedList<>();
+    // Фильтры файлов
     private List<FileExcludeFilter> fileExcludeFilters = new LinkedList<>();
 
+    // Fork Join pool с потоками для сканирования директорий
     private ForkJoinPool scanPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
     private DirScanner() {
@@ -30,6 +38,10 @@ public final class DirScanner {
         return scanner;
     }
 
+    /**
+     * Метод инициализации сканера
+     * @param result - результат парсинга входящих параметров
+     */
     public void init(ParseResult result) {
         registerFilters(result.getFilters());
         this.dirForScan = result.getDirsToScan();
@@ -54,17 +66,21 @@ public final class DirScanner {
         }
     }
 
+    /**
+     * Метод сканирования
+     */
     public void scan() {
         if(!isInit) {
             throw new InitException("Cannot start scanning: Dir Scanner is not initialized");
         }
+        // Для каждой директории создается таска DirScanning и помещается в ForkJoinPool,
+        // в котором она начинает исполняться
         dirForScan.stream()
                 .map(dir -> new DirScanning(dir, dirExcludeFilters, fileExcludeFilters))
                 .forEach(scanPool::invoke);
 
+        // После завершения сканирования вызывается метод,
+        // сигнализирующий FilesProcessor'у о том, что сканирование завершено
         FilesProcessor.getProcessor().finish();
-        while (scanPool.hasQueuedSubmissions() || scanPool.getActiveThreadCount() > 0) {
-            Thread.yield();
-        }
     }
 }

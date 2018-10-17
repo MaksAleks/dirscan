@@ -44,10 +44,10 @@ class FilesProcessorTest extends Specification {
         ApplicationConfig config = new TestApplicationConfig();
 
         and: "Выходной файл"
-        Path outputFile = Paths.get(config.outputFilePath())
+        Path outputFile = config.outputFilePath()
 
         and: "Существующий файл для обработки"
-        Path file = Paths.get("./test/test.txt")
+        Path file = Paths.get("./test/test.txt").toAbsolutePath().normalize()
         Files.createDirectories(file.getParent())
         Files.createFile(file)
 
@@ -80,8 +80,8 @@ class FilesProcessorTest extends Specification {
         formattedLine.equals(resultString)
 
         cleanup:
-        Files.deleteIfExists(file)
-        Files.deleteIfExists(outputFile)
-        Files.deleteIfExists(file.getParent())
+        file.toFile().deleteOnExit()
+        outputFile.toFile().deleteOnExit()
+        file.getParent().toFile().deleteOnExit()
     }
 }
