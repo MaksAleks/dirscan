@@ -42,6 +42,7 @@ public final class DirScanner {
     }
 
     private void registerFilter(ExcludeFilter filter) {
+        if(filter.isEmpty()) return;
         if(filter instanceof DirExcludeFilter) {
             DirExcludeFilter dirExcludeFilter = (DirExcludeFilter) filter;
             dirExcludeFilters.add(dirExcludeFilter);
@@ -53,7 +54,7 @@ public final class DirScanner {
         }
     }
 
-    public void startScan() {
+    public void scan() {
         if(!isInit) {
             throw new InitException("Cannot start scanning: Dir Scanner is not initialized");
         }
@@ -61,10 +62,11 @@ public final class DirScanner {
                 .map(dir -> new DirScanning(dir, dirExcludeFilters, fileExcludeFilters))
                 .forEach(scanPool::invoke);
 
-        FilesProcessor.getProcessor().finish();
         while (scanPool.hasQueuedSubmissions() || scanPool.getActiveThreadCount() > 0) {
             Thread.yield();
         }
         scanPool.shutdown();
+        FilesProcessor.getProcessor().finish();
+        FilesProcessor.getProcessor().waitForComplete();
     }
 }

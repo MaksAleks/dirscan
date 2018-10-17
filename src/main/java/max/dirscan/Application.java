@@ -53,7 +53,7 @@ class Application {
             processor.start();
             ParseResult result = paramsParser.parse(inputParams);
             scanner.init(result);
-            scanner.startScan();
+            scanner.scan();
             processor.waitForComplete();
         } catch (ValidationParamsException | InitException e) {
             System.out.println(e.getMessage());
