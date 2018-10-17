@@ -23,7 +23,7 @@ public interface ApplicationConfig {
     InputParamsParser inputParamsParser();
 
     default int outputEntryBufferSize() {
-        return 5*MByte;
+        return 2*MByte;
     }
 
     public class Size {

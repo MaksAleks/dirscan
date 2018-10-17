@@ -7,10 +7,12 @@ public class Main {
 
     public static void main(String[] args) {
 
+        String[] testArgs = {"C:\\Program Files\\"};
+
         Application application = Application.getApplication();
         ApplicationConfig config = new DefaultApplicationConfig();
         application.init(config);
-        application.start(args);
+        application.start(testArgs);
     }
 
 }

@@ -17,9 +17,10 @@ public class DirExcluder extends Excluder {
 
     private final String KEY = "-";
 
-    private final Pattern WIN_PATH = Pattern.compile("^([a-zA-Z]\\:\\\\|\\\\)(\\\\[\\w\\.\\-\\_\\s]+)+\\\\$");
-    private final Pattern WIN_PATH_2 = Pattern.compile("^([a-zA-Z]\\:)(\\/[\\w-_.\\s]+)+\\/$");
-    private final Pattern UNIX_PATH = Pattern.compile("^\\/([\\w-_.\\s\\\\]+\\/)*$");
+    private final Pattern winPattern1
+            = Pattern.compile("^([a-zA-Z]\\:\\\\|[a-zA-Z]\\:|\\\\)(\\\\[\\w\\.\\-\\_\\s]+|\\\\\\\\[\\w\\.\\-\\_\\s]+)*\\\\$");
+    private final Pattern winPattern2 = Pattern.compile("^([a-zA-Z]\\:)(\\/[\\w-_.\\s]+)+\\/$");
+    private final Pattern unixPattern = Pattern.compile("^\\/([\\w-_.\\s\\\\]+\\/)*$");
 
     private DirsValidator validator = new DirsValidator();
 
@@ -35,9 +36,9 @@ public class DirExcluder extends Excluder {
     @Override
     protected List<Pattern> excludePatterns() {
         List<Pattern> patterns = new LinkedList<>();
-        patterns.add(WIN_PATH);
-        patterns.add(WIN_PATH_2);
-        patterns.add(UNIX_PATH);
+        patterns.add(winPattern1);
+        patterns.add(winPattern2);
+        patterns.add(unixPattern);
         return patterns;
     }
 

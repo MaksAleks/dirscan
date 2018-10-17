@@ -3,7 +3,8 @@ package max.dirscan.output.format;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.*;
+import java.text.SimpleDateFormat;
 
 public class DefaultFileFormatter extends FileFormatter {
 
@@ -15,7 +16,10 @@ public class DefaultFileFormatter extends FileFormatter {
     public final String formatEntry(Path path, BasicFileAttributes attrs) throws IOException {
 
         String name = path.toAbsolutePath().toString();
-        String date = attrs.creationTime().toString();
+
+        FileTime date = attrs.creationTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        String dateCreated = df.format(date.toMillis());
         Long size = attrs.size();
 
         return "[\n" +
@@ -23,7 +27,7 @@ public class DefaultFileFormatter extends FileFormatter {
                 name +
                 "\n" +
                 " date=" +
-                date +
+                dateCreated +
                 "\n" +
                 " size=" +
                 size +
