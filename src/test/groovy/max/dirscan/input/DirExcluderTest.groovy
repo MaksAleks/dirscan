@@ -60,7 +60,7 @@ class DirExcluderTest extends Specification {
         String dir = "/home/dir/"
 
         and: "Директория /home/dir/ существует"
-        mock.isExist(Paths.get(dir)) >> true
+        mock.isExists(Paths.get(dir)) >> true
 
         and: "Все входящие параметры после ключа '-' валидны"
         String[] validParams = ["/home/user/", "/opt/test/", "-", dir]

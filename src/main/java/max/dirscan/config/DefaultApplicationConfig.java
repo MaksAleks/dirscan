@@ -38,7 +38,7 @@ public class DefaultApplicationConfig implements ApplicationConfig {
 
     @Override
     public InputParamsParser inputParamsParser() {
-        return new InputParamsParser();
+        return new InputParamsParser(new DirsValidator());
     }
 
 }

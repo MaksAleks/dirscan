@@ -4,12 +4,12 @@ import java.nio.file.*;
 
 public class DirsValidator {
 
-    public boolean isExist(Path path) {
+    public boolean isExists(Path path) {
         return Files.exists(path);
     }
 
     public boolean isNotExists(Path path) {
-        return !Files.exists(path);
+        return !isExists(path);
     }
 
     public boolean isDirectory(Path path) {
@@ -17,6 +17,6 @@ public class DirsValidator {
     }
 
     public boolean isNotDirectory(Path path) {
-        return !Files.isDirectory(path);
+        return !isDirectory(path);
     }
 }
