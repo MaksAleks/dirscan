@@ -25,11 +25,13 @@ public class InputParamsParser {
         matchers.add(unixPattern.matcher(""));
     }
 
+    private DirsValidator validator;
+
     List<Path> dirsToScan = new LinkedList<>();
     List<Excluder> excluders = new LinkedList<>();
 
-    public InputParamsParser() {
-
+    public InputParamsParser(DirsValidator validator) {
+        this.validator = validator;
     }
 
     public InputParamsParser(List<Excluder> excluders) {
@@ -57,7 +59,7 @@ public class InputParamsParser {
             boolean isDir = matchers.stream().anyMatch(matcher -> matcher.reset(param).matches());
             if(isDir) {
                 Path dir = Paths.get(param);
-                if(!Files.exists(dir)) {
+                if(!validator.isExists(dir)) {
                     throw new ValidationParamsException("Directory \"" + dir.toString() + "\" doesn't exist", params);
                 }
                 dirsToScan.add(dir);

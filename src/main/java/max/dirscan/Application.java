@@ -34,7 +34,7 @@ class Application {
         paramsParser = config.inputParamsParser();
         paramsParser.registerExcluders(config.inputParamsExcluders());
 
-        scanner = new DirScanner();
+        scanner = DirScanner.getScanner();
 
         processor = FilesProcessor.getProcessor();
         processor.init(config);
@@ -53,7 +53,7 @@ class Application {
             processor.start();
             ParseResult result = paramsParser.parse(inputParams);
             scanner.init(result);
-            scanner.startScan();
+            scanner.scan();
             processor.waitForComplete();
         } catch (ValidationParamsException | InitException e) {
             System.out.println(e.getMessage());

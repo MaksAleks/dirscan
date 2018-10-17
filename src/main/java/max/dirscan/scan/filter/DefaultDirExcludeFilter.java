@@ -1,27 +1,26 @@
 package max.dirscan.scan.filter;
 
-import java.nio.file.Files;
+import max.dirscan.input.DirsValidator;
+
 import java.nio.file.Path;
 import java.util.List;
 
 public class DefaultDirExcludeFilter extends DirExcludeFilter {
 
-    public DefaultDirExcludeFilter(List<Path> dirsToFilter) {
-        super(dirsToFilter);
+    public DefaultDirExcludeFilter(List<Path> dirsToFilter, DirsValidator validator) {
+        super(dirsToFilter, validator);
     }
 
     @Override
-    public boolean filter(Path path) {
-        if (Files.isDirectory(path)) {
-            return dirsToFilter.contains(path) ||
-                    dirsToFilter.stream()
-                            .anyMatch(parent -> isParent(path, parent));
+    protected boolean filterDir(Path path) {
+        // Фильтруем
+        return getDirsToFilter().contains(path) || // либо содержит данную директорию среди тех, которые нужно отфильтровать
+                        dirsToFilter.stream()   // либо данная директория является дочерней для одной из тех, которые нужно отфильтровать
+                                .anyMatch(parent -> isParentFor(path, parent));
 
-        }
-        return false;
     }
 
-    private boolean isParent(Path mayBeChild, Path parent) {
+    private boolean isParentFor(Path mayBeChild, Path parent) {
         return mayBeChild.startsWith(parent);
     }
 }

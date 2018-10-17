@@ -21,7 +21,13 @@ public final class DirScanner {
 
     private ForkJoinPool scanPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
-    public DirScanner() {
+    private DirScanner() {
+    }
+
+    private static DirScanner scanner = new DirScanner();
+
+    public static DirScanner getScanner() {
+        return scanner;
     }
 
     public void init(ParseResult result) {
@@ -36,6 +42,7 @@ public final class DirScanner {
     }
 
     private void registerFilter(ExcludeFilter filter) {
+        if(filter.isEmpty()) return;
         if(filter instanceof DirExcludeFilter) {
             DirExcludeFilter dirExcludeFilter = (DirExcludeFilter) filter;
             dirExcludeFilters.add(dirExcludeFilter);
@@ -47,7 +54,7 @@ public final class DirScanner {
         }
     }
 
-    public void startScan() {
+    public void scan() {
         if(!isInit) {
             throw new InitException("Cannot start scanning: Dir Scanner is not initialized");
         }
@@ -59,6 +66,5 @@ public final class DirScanner {
         while (scanPool.hasQueuedSubmissions() || scanPool.getActiveThreadCount() > 0) {
             Thread.yield();
         }
-        scanPool.shutdown();
     }
 }
