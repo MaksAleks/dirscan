@@ -58,7 +58,7 @@ public class DirExcluder extends Excluder {
         boolean isDir = matchers.stream().anyMatch(matcher -> matcher.reset(param).matches());
         if(isDir) {
             Path dir = Paths.get(param);
-            if(validator.isNotExists(dir)) {
+            if(!validator.isExists(dir)) {
                 throw new ValidationParamsException("Directory \"" + param + "\" doesn't exist", params);
             }
             excludeFiles.add(dir);

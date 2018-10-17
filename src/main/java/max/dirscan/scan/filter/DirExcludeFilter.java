@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class DirExcludeFilter extends ExcludeFilter {
 
-    private List<Path> dirsToFilter;
+    protected List<Path> dirsToFilter;
 
     private DirsValidator validator;
 

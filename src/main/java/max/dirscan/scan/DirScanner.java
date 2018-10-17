@@ -62,11 +62,9 @@ public final class DirScanner {
                 .map(dir -> new DirScanning(dir, dirExcludeFilters, fileExcludeFilters))
                 .forEach(scanPool::invoke);
 
+        FilesProcessor.getProcessor().finish();
         while (scanPool.hasQueuedSubmissions() || scanPool.getActiveThreadCount() > 0) {
             Thread.yield();
         }
-        scanPool.shutdown();
-        FilesProcessor.getProcessor().finish();
-        FilesProcessor.getProcessor().waitForComplete();
     }
 }

@@ -59,7 +59,7 @@ public class InputParamsParser {
             boolean isDir = matchers.stream().anyMatch(matcher -> matcher.reset(param).matches());
             if(isDir) {
                 Path dir = Paths.get(param);
-                if(validator.isNotExists(dir)) {
+                if(!validator.isExists(dir)) {
                     throw new ValidationParamsException("Directory \"" + dir.toString() + "\" doesn't exist", params);
                 }
                 dirsToScan.add(dir);

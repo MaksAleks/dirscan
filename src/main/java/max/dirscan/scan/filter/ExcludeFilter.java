@@ -8,10 +8,6 @@ public abstract class ExcludeFilter {
 
     public abstract boolean isEmpty();
 
-    public final boolean isNotEmpty() {
-        return !isEmpty();
-    }
-
     public static ExcludeFilter emptyFilter() {
 
         return new ExcludeFilter() {

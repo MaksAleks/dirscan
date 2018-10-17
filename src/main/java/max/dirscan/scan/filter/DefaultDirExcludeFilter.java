@@ -14,10 +14,9 @@ public class DefaultDirExcludeFilter extends DirExcludeFilter {
     @Override
     protected boolean filterDir(Path path) {
         // Фильтруем
-        return isNotEmpty() && // Если фильтр не пустой и
-                (getDirsToFilter().contains(path) || // либо содержит данную директорию среди тех, которые нужно отфильтровать
-                        getDirsToFilter().stream()   // либо данная директория является дочерней для одной из тех, которые нужно отфильтровать
-                                .anyMatch(parent -> isParentFor(path, parent)));
+        return getDirsToFilter().contains(path) || // либо содержит данную директорию среди тех, которые нужно отфильтровать
+                        dirsToFilter.stream()   // либо данная директория является дочерней для одной из тех, которые нужно отфильтровать
+                                .anyMatch(parent -> isParentFor(path, parent));
 
     }
 

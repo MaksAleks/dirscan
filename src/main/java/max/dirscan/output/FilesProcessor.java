@@ -69,7 +69,6 @@ public class FilesProcessor {
         while (queueFiller.hasQueuedSubmissions() || queueFiller.getActiveThreadCount() > 0 || writerManager.filesQueue.size() > 0) {
             Thread.yield();
         }
-        queueFiller.shutdown();
         writerManagerThread.interrupt();
     }
 

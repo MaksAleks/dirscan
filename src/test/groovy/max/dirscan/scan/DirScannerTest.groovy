@@ -43,9 +43,9 @@ class DirScannerTest extends Specification {
         Path fileA = Paths.get("./test/scan/fileA.txt")
         Path fileB = Paths.get("./test/scan/fileB.txt")
         Path fileC = Paths.get("./test/scan/fileC.txt")
-        Files.createFile(fileA)
         Files.createFile(fileB)
         Files.createFile(fileC)
+        Files.createFile(fileA)
 
         // Объект, который мы получаем после парсинга входящих параметров
         // Содержит директории для сканирования и фильтры
@@ -67,6 +67,7 @@ class DirScannerTest extends Specification {
 
         when: "Когда сканер отсканирует все переданные ему директории"
         scanner.scan()
+        FilesProcessor.getProcessor().waitForComplete()
 
         then: "Получаем непустой результирующий файл"
         Files.exists(outputFile)
