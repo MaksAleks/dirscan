@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class InputParamsParser {
 
-    private final Pattern winPattern1 = Pattern.compile("^([a-zA-Z]\\:\\\\|[a-zA-Z]\\:|\\\\)(\\\\[\\w\\.\\-\\_\\s]+)+\\\\$");
+    private final Pattern winPattern1 = Pattern.compile("^([a-zA-Z]\\:\\\\|[a-zA-Z]\\:|\\\\)(\\\\[\\w\\.\\-\\_\\s]+)*\\\\$");
     private final Pattern winPattern2 = Pattern.compile("^([a-zA-Z]\\:)(\\/[\\w-_.\\s]+)+\\/$");
     private final Pattern unixPattern = Pattern.compile("^\\/([\\w-_.\\s\\\\]+\\/)*$");
     private List<Matcher> matchers = new ArrayList<>(3);
