@@ -5,12 +5,13 @@ import max.dirscan.exceptions.InitException;
 import max.dirscan.exceptions.ValidationParamsException;
 import max.dirscan.input.Excluder;
 import max.dirscan.input.InputParamsParser;
-import max.dirscan.input.InputParamsValidator;
 import max.dirscan.input.ParseResult;
 import max.dirscan.output.FilesProcessor;
 import max.dirscan.output.Timer;
 import max.dirscan.scan.DirScanner;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 //Singleton
@@ -28,11 +29,9 @@ class Application {
 
     private FilesProcessor processor;
 
-    private List<InputParamsValidator> validators;
 
     public void init(ApplicationConfig config) {
         this.config = config;
-        validators = config.inputParamsValidators();
         List<Excluder> excluders = config.inputParamsExcluders();
         paramsParser = new InputParamsParser(excluders);
         scanner = new DirScanner();
@@ -48,7 +47,7 @@ class Application {
             if(!isInit) {
                 throw new InitException("Cannot start application: application is not initialized");
             }
-            validateParams(inputParams);
+            Files.deleteIfExists(Paths.get(config.outputFilePath()));
             processor.start();
             ParseResult result = paramsParser.parse(inputParams);
             scanner.init(result);
@@ -61,15 +60,11 @@ class Application {
             System.out.println("\nUnexpexpected error occured:");
             e.printStackTrace();
         } finally {
-            long execTime = timer.stop();
-            System.out.println("\nApplication finished: execution time = " + execTime);
+            long execTimeMs = timer.stop();
+            System.out.println("\nApplication finished: execution time = " + execTimeMs + "ms");
             shutdown();
         }
 
-    }
-
-    private void validateParams(String... inputParams) {
-        validators.forEach(validator -> validator.validate(inputParams));
     }
 
     private void shutdown() {

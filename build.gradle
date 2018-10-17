@@ -1,3 +1,8 @@
+plugins {
+    id "io.spring.dependency-management" version "1.0.6.RELEASE"
+}
+
+
 group 'max.dirscan'
 version '1.0-SNAPSHOT'
 
@@ -5,6 +10,12 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 
 sourceCompatibility = 1.8
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'max.dirscan.Main'
+    }
+}
 
 repositories {
     mavenCentral()

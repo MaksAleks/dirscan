@@ -1,24 +1,34 @@
 package max.dirscan.exceptions;
 
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
+
 public class ValidationParamsException extends RuntimeException {
 
     private String[] params;
 
-    public ValidationParamsException(String message, Throwable e, String... params) {
-        super(message, e);
+    private String message;
+
+    private final String PREFIX = "[Validation params ERROR]: ";
+
+    public ValidationParamsException(String message, Throwable e, String[] params) {
+        super(e);
         this.params  = params;
+        this.message = PREFIX + paramsString() + message;
     }
 
-    public ValidationParamsException(String message, String... params) {
-        super(message);
+    public ValidationParamsException(String message, String[] params) {
         this.params = params;
+        this.message = PREFIX + paramsString() + message;
     }
 
-    public ValidationParamsException(String message, Throwable e) {
-        super(message,e);
+    @Override
+    public String getMessage() {
+        return message;
     }
 
-    public ValidationParamsException(String message) {
-        super(message);
+    private String paramsString() {
+        return Stream.of(params).collect(joining(" ", "Input params string: \"", "\"\n\t"));
     }
 }
