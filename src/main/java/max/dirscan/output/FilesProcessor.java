@@ -168,7 +168,7 @@ public class FilesProcessor {
                     String file = filesQueue.poll();
                     if (file == null) {
                         // Когда находим в очереди null (т.е. очередь пуста)
-                        // формируем временный файл, в котором будут храниться все отсортированные по
+                        // формируем файл, в котором будут храниться все отсортированные по
                         // алфавиту записи
                         Path sortedFile = Paths.get(config.outputFilePath().toString() + "_sorted");
                         Files.deleteIfExists(sortedFile);
@@ -244,6 +244,10 @@ public class FilesProcessor {
             writer.writelnLines(toFlush);
         }
 
+        /**
+         * положить файл в оередь
+         * @param fileName - абсолютный путь файла
+         */
         private void putOutputEntry(String fileName) {
             try {
                 filesQueue.put(fileName);

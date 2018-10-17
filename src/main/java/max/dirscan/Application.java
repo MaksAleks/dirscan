@@ -33,6 +33,13 @@ class Application {
     private FilesProcessor processor;
 
 
+    /**
+     * Метод инициализации приложения
+     * Из конфигурации считываются основные параметры
+     * и создаются основные объекты отвечающие за работу приложения
+     *
+     * @param config - конфигурация приложения {@link ApplicationConfig}
+     */
     public void init(ApplicationConfig config) {
         this.config = config;
 
@@ -47,6 +54,10 @@ class Application {
         isInit = true;
     }
 
+    /**
+     * Метод старта приложения
+     * @param inputParams - входящие параметры
+     */
     public void start(String... inputParams) {
         try {
             System.out.println("Application started");
