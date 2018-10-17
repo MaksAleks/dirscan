@@ -1,6 +1,5 @@
 package max.dirscan.config;
 
-import com.sun.istack.internal.NotNull;
 import max.dirscan.input.Excluder;
 import max.dirscan.input.InputParamsParser;
 import max.dirscan.output.format.FileFormatter;
@@ -21,32 +20,27 @@ public interface ApplicationConfig {
     /**
      * @return путь до выходного файла приложения.
      */
-    @NotNull
     Path outputFilePath();
 
 
     /**
      * @return возвращает кодировку выходного файла приложения
      */
-    @NotNull
     Charset outputFileCharset();
 
     /**
      * @return Возвращает класс, отвечающий форматирование вывода в выходной файл
      */
-    @NotNull
     FileFormatter fileFormatter();
 
     /**
      * @return Возвращает список классов, отвечающих за исключение файлов из сканирования
      */
-    @NotNull
     List<Excluder> inputParamsExcluders();
 
     /**
      * @return Возвращает класс, отвечающий за парсинг входных параметров приложения
      */
-    @NotNull
     InputParamsParser inputParamsParser();
 
     /**
