@@ -1,8 +1,10 @@
 package max.dirscan.config;
 
+import com.sun.istack.internal.NotNull;
 import max.dirscan.input.Excluder;
 import max.dirscan.input.InputParamsParser;
 import max.dirscan.output.format.FileFormatter;
+import max.dirscan.sort.ExternalMergeSort;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -10,18 +12,49 @@ import java.util.List;
 
 import static max.dirscan.config.ApplicationConfig.Size.MByte;
 
+/**
+ * Интерфейс, отвечающий за конфигурацию приложения.
+ * Это основная точка для расширения приложения
+ */
 public interface ApplicationConfig {
 
+    /**
+     * @return путь до выходного файла приложения.
+     */
+    @NotNull
     Path outputFilePath();
 
+
+    /**
+     * @return возвращает кодировку выходного файла приложения
+     */
+    @NotNull
     Charset outputFileCharset();
 
+    /**
+     * @return Возвращает класс, отвечающий форматирование вывода в выходной файл
+     */
+    @NotNull
     FileFormatter fileFormatter();
 
+    /**
+     * @return Возвращает список классов, отвечающих за исключение файлов из сканирования
+     */
+    @NotNull
     List<Excluder> inputParamsExcluders();
 
+    /**
+     * @return Возвращает класс, отвечающий за парсинг входных параметров приложения
+     */
+    @NotNull
     InputParamsParser inputParamsParser();
 
+    /**
+     * Т.к. выходной файл может быть достаточно большим, чтобы не поместиться в ОЗУ,
+     * нужен какой-то буфер {@link max.dirscan.output.SortedFilesBuffer} и временные файлы, с помощью которых производится
+     * сортировка {@link ExternalMergeSort} выходного файла
+     * @return возвращает максимальный размер буфера, Значение по умолчанию 2 мегабайта
+     */
     default int outputEntryBufferSize() {
         return 2*MByte;
     }

@@ -14,8 +14,7 @@ public class FileReader implements Closeable {
     public FileReader(Path file, Charset charset) {
         try {
             this.file = file;
-            InputStream in = new FileInputStream(file.toFile());
-            reader = new BufferedReader(new InputStreamReader(in, charset));
+            reader = Files.newBufferedReader(file, charset);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

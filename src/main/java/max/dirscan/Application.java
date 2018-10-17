@@ -10,9 +10,14 @@ import max.dirscan.output.Timer;
 import max.dirscan.scan.DirScanner;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 //Singleton
+
+/**
+ * Главный класс приложения. С него начинается вся работа
+ * Поведение приложения зависит от его конфигурации {@link max.dirscan.config.ApplicationConfig}
+ *
+ */
 class Application {
 
     private boolean isInit = false;
