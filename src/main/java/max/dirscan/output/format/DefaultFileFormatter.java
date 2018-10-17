@@ -12,7 +12,7 @@ public class DefaultFileFormatter extends FileFormatter {
     }
 
     @Override
-    public String formatEntry(Path path, BasicFileAttributes attrs) throws IOException {
+    public final String formatEntry(Path path, BasicFileAttributes attrs) throws IOException {
 
         String name = path.toAbsolutePath().toString();
         String date = attrs.creationTime().toString();

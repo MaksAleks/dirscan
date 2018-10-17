@@ -21,7 +21,13 @@ public final class DirScanner {
 
     private ForkJoinPool scanPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
-    public DirScanner() {
+    private DirScanner() {
+    }
+
+    private static DirScanner scanner = new DirScanner();
+
+    public static DirScanner getScanner() {
+        return scanner;
     }
 
     public void init(ParseResult result) {

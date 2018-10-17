@@ -21,7 +21,7 @@ public abstract class FileFormatter {
         this.charset = charset;
     }
 
-    protected abstract String formatEntry(Path path, BasicFileAttributes attrs) throws IOException;
+    public abstract String formatEntry(Path path, BasicFileAttributes attrs) throws IOException;
 
     public final void format() {
         String formattedFilePath = file.toFile().getAbsolutePath() + "_formatted";
@@ -39,7 +39,6 @@ public abstract class FileFormatter {
                     writer.write(formattedEntry);
                 }
             }
-            writer.write("\n");
             Files.deleteIfExists(file);
             Files.move(formattedFile, file);
         } catch (NoSuchFileException e) {

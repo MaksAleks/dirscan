@@ -34,7 +34,7 @@ class Application {
         paramsParser = config.inputParamsParser();
         paramsParser.registerExcluders(config.inputParamsExcluders());
 
-        scanner = new DirScanner();
+        scanner = DirScanner.getScanner();
 
         processor = FilesProcessor.getProcessor();
         processor.init(config);

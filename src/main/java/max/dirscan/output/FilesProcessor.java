@@ -2,6 +2,7 @@ package max.dirscan.output;
 
 
 import max.dirscan.config.ApplicationConfig;
+import max.dirscan.exceptions.InitException;
 import max.dirscan.output.format.FileFormatter;
 import max.dirscan.sort.ExternalMergeSort;
 
@@ -23,6 +24,8 @@ public class FilesProcessor {
 
     private volatile boolean isStared = false;
 
+    private boolean isInit = false;
+
     private ForkJoinPool queueFiller = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
     private Thread writerManagerThread;
@@ -43,6 +46,7 @@ public class FilesProcessor {
         writerManager = new WriteManager(config);
         writerManagerThread = new Thread(writerManager);
         writerManagerThread.setName("WriterManager Thread");
+        isInit = true;
     }
 
     public boolean isStared() {
@@ -50,6 +54,9 @@ public class FilesProcessor {
     }
 
     public void start() {
+        if(!isInit) {
+            throw new InitException("Cannot start File Processor: File Processor is not initialized");
+        }
         writerManagerThread.start();
         isStared = true;
     }
