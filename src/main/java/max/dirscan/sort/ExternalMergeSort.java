@@ -7,9 +7,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
-public class ExternalTwoWaySort {
+public class ExternalMergeSort {
 
-    public static long mergeSortedFiles(List<File> files, File outputFile,
+    public long mergeSortedFiles(List<File> files, File outputFile,
                                         final Comparator<String> comparator,
                                         Charset cs,
                                         boolean append) throws IOException {
@@ -30,7 +30,7 @@ public class ExternalTwoWaySort {
         return rowcounter;
     }
 
-    public static long mergeSortedFiles(BufferedWriter fbw,
+    private long mergeSortedFiles(BufferedWriter fbw,
                                         final Comparator<String> comparator,
                                         List<BinaryFileBuffer> buffers) throws IOException {
 

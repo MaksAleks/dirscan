@@ -3,6 +3,7 @@ package max.dirscan.output;
 
 import max.dirscan.config.ApplicationConfig;
 import max.dirscan.output.format.FileFormatter;
+import max.dirscan.sort.ExternalMergeSort;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +17,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import static max.dirscan.sort.ExternalTwoWaySort.mergeSortedFiles;
 
 // singleton
 public class FilesProcessor {
@@ -137,7 +136,8 @@ public class FilesProcessor {
         }
 
         private void performSorting() throws IOException {
-            mergeSortedFiles(
+            ExternalMergeSort sort = new ExternalMergeSort();
+            sort.mergeSortedFiles(
                     sortedFiles,
                     Paths.get(config.outputFilePath()).toFile(),
                     Comparator.comparing(String::toLowerCase),
