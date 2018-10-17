@@ -5,7 +5,6 @@ import max.dirscan.exceptions.ValidationParamsException;
 import max.dirscan.scan.filter.DefaultDirExcludeFilter;
 import max.dirscan.scan.filter.ExcludeFilter;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -21,6 +20,12 @@ public class DirExcluder extends Excluder {
     private final Pattern WIN_PATH = Pattern.compile("^([a-zA-Z]\\:\\\\|\\\\)(\\\\[\\w\\.\\-\\_\\s]+)+\\\\$");
     private final Pattern WIN_PATH_2 = Pattern.compile("^([a-zA-Z]\\:)(\\/[\\w-_.\\s]+)+\\/$");
     private final Pattern UNIX_PATH = Pattern.compile("^\\/([\\w-_.\\s\\\\]+\\/)*$");
+
+    private DirsValidator validator = new DirsValidator();
+
+    public DirExcluder(DirsValidator validator) {
+        this.validator = validator;
+    }
 
     @Override
     protected String getKey() {
@@ -53,7 +58,7 @@ public class DirExcluder extends Excluder {
         boolean isDir = matchers.stream().anyMatch(matcher -> matcher.reset(param).matches());
         if(isDir) {
             Path dir = Paths.get(param);
-            if(!Files.exists(dir)) {
+            if(validator.isNotExists(dir)) {
                 throw new ValidationParamsException("Directory \"" + param + "\" doesn't exist", params);
             }
             excludeFiles.add(dir);

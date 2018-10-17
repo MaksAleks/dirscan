@@ -1,6 +1,7 @@
 package max.dirscan.config;
 
 import max.dirscan.input.DirExcluder;
+import max.dirscan.input.DirsValidator;
 import max.dirscan.input.Excluder;
 
 import max.dirscan.input.InputParamsParser;
@@ -32,7 +33,7 @@ public class DefaultApplicationConfig implements ApplicationConfig {
 
     @Override
     public List<Excluder> inputParamsExcluders() {
-        return Collections.singletonList(new DirExcluder());
+        return Collections.singletonList(new DirExcluder(new DirsValidator()));
     }
 
     @Override

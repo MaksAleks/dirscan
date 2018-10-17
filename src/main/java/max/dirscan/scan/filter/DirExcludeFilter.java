@@ -11,6 +11,10 @@ public abstract class DirExcludeFilter extends ExcludeFilter {
         this.dirsToFilter = dirsToFilter;
     }
 
+    public List<Path> getDirsToFilter() {
+        return dirsToFilter;
+    }
+
     public boolean isEmpty() {
         return dirsToFilter.isEmpty();
     }
