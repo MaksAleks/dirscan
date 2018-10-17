@@ -22,7 +22,7 @@ import static max.dirscan.sort.ExternalTwoWaySort.mergeSortedFiles;
 // singleton
 public class FilesProcessor {
 
-    private boolean isStared = false;
+    private volatile boolean isStared = false;
 
     private ForkJoinPool queueFiller = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
@@ -72,7 +72,6 @@ public class FilesProcessor {
             Thread.yield();
         }
     }
-
 
     private class WriteManager implements Runnable {
 

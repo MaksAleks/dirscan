@@ -3,6 +3,7 @@ package max.dirscan.config;
 import max.dirscan.input.DirExcluder;
 import max.dirscan.input.Excluder;
 
+import max.dirscan.input.InputParamsParser;
 import max.dirscan.output.format.DefaultFileFormatter;
 import max.dirscan.output.format.FileFormatter;
 
@@ -32,6 +33,11 @@ public class DefaultApplicationConfig implements ApplicationConfig {
     @Override
     public List<Excluder> inputParamsExcluders() {
         return Collections.singletonList(new DirExcluder());
+    }
+
+    @Override
+    public InputParamsParser inputParamsParser() {
+        return new InputParamsParser();
     }
 
 }

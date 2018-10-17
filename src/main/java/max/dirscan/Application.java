@@ -3,7 +3,6 @@ package max.dirscan;
 import max.dirscan.config.ApplicationConfig;
 import max.dirscan.exceptions.InitException;
 import max.dirscan.exceptions.ValidationParamsException;
-import max.dirscan.input.Excluder;
 import max.dirscan.input.InputParamsParser;
 import max.dirscan.input.ParseResult;
 import max.dirscan.output.FilesProcessor;
@@ -12,7 +11,6 @@ import max.dirscan.scan.DirScanner;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 
 //Singleton
 class Application {
@@ -32,11 +30,15 @@ class Application {
 
     public void init(ApplicationConfig config) {
         this.config = config;
-        List<Excluder> excluders = config.inputParamsExcluders();
-        paramsParser = new InputParamsParser(excluders);
+
+        paramsParser = config.inputParamsParser();
+        paramsParser.registerExcluders(config.inputParamsExcluders());
+
         scanner = new DirScanner();
+
         processor = FilesProcessor.getProcessor();
         processor.init(config);
+
         isInit = true;
     }
 

@@ -1,6 +1,7 @@
 package max.dirscan.config;
 
 import max.dirscan.input.Excluder;
+import max.dirscan.input.InputParamsParser;
 import max.dirscan.output.format.FileFormatter;
 
 import java.nio.charset.Charset;
@@ -17,6 +18,8 @@ public interface ApplicationConfig {
     FileFormatter fileFormatter();
 
     List<Excluder> inputParamsExcluders();
+
+    InputParamsParser inputParamsParser();
 
     default int outputEntryBufferSize() {
         return 5*MByte;
